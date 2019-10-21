@@ -1,0 +1,66 @@
+#
+npm install --save babel-loader @babel/core @babel/preset-env webpack webpack-cli
+
+#
+npm install @babel/runtime --save
+npm install @babel/plugin-transform-runtime --save-dev
+
+修改.babelrc文件的内容为：
+
+{
+  "presets": [
+    "@babel/preset-env",
+    "@babel/preset-typescript"
+  ],
+  "plugins": [
+    "@babel/transform-runtime"
+  ]
+}
+
+babel-runtime（也就是上面plugins数组中的transform-runtime），解决了辅助代码（即让我们可以使用新特性的代码）被默认添加到每一个需要他的文件的问题（这会导致文件过大）。
+
+#
+npm install @babel/preset-typescript --save-dev
+
+#
+npm install --save-dev style-loader css-loader 
+
+遇到后缀为.css的文件，webpack先用css-loader加载器去解析这个文件，遇到“@import”等语句就将相应样式文件引入（所以如果没有css-loader，就没法解析这类语句），最后计算完的css，将会使用style-loader生成一个内容为最终解析完的css代码的style标签，放到head标签里。作者：dayindayout
+
+#
+npm install less-loader less --save-dev
+
+{
+    test:/\.less$/,
+    loader:'style-loader!css-loader!less-loader'
+}
+
+#
+npm install sass-loader sass --save-dev
+
+{
+    test:/\.sass$/,
+    loader:'style-loader!css-loader!sass-loader'
+}
+
+#
+1.
+npm install -D postcss-loader
+
+2.
+webpack.config.js
+{
+  test:/\.less$/,
+  loader:'style-loader!css-loader!postcss-loader!less-loader'
+  //postcss-loader的位置不能变
+},
+
+3.
+在webpack.config.js同级目录创建postcss.config.js 的配置文件，内容如下
+module.exports = {
+  plugins: [
+    require('autoprefixer')({browsers:'ios >= 8'})
+ ]
+}
+
+自动加浏览器前缀 postcss-loader配置
